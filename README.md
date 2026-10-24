@@ -1,5 +1,14 @@
 # VaultFlow - Personal Finance Manager
 
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Deployed-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://finance-manager-mauve-six.vercel.app)
+[![Node.js](https://img.shields.io/badge/Node.js-v24.x-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![SQLite](https://img.shields.io/badge/SQLite-node:sqlite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://nodejs.org/api/sqlite.html)
+[![React 18](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+
+🔗 **Live Production URL:** [https://finance-manager-mauve-six.vercel.app](https://finance-manager-mauve-six.vercel.app)  
+🌐 **Alternative Alias:** [https://finance-manager-harsh312-afk.vercel.app](https://finance-manager-harsh312-afk.vercel.app)
+
 > **"Built a personal finance manager with transaction tracking, budget management, and spending analytics. Demonstrates handling sensitive financial data with proper input validation, complex data relationships with foreign keys, and data aggregation using SQL for reporting dashboards."**
 
 VaultFlow is a full-stack personal finance web application engineered to model complex financial relationships, perform advanced relational data aggregation using SQL window functions and CTEs, enforce integer-cents precision for monetary integrity, and deliver clear, accessible data visualizations.
@@ -8,6 +17,11 @@ VaultFlow is a full-stack personal finance web application engineered to model c
 
 ## 🌟 Core Highlights & Architectural Strengths
 
+- **Live Full-Stack Serverless on Vercel**: Deployed with automated CI/CD on Vercel utilizing Node 24 and native `node:sqlite` in serverless execution with auto-seeding.
+- **Custom Brand Icon & Web Manifest**: Sleek vector SVG icon (`public/favicon.svg`, `public/icon.svg`) and PWA web app manifest.
+- **Dynamic Period Switching**: Interactive month selector across September 2026, August 2026, and July 2026 on Overview and Budgets pages.
+- **Responsive Mobile Drawer**: Collapsible mobile sidebar with backdrop overlay and quick hamburger navigation.
+- **Optimized Bundle Splitting**: Rollup chunk splitting (`vendor-charts`, `vendor-icons`, `vendor-core`) keeping all JS chunks under 320 kB.
 - **Financial Decimal Precision Architecture**: All monetary figures across the database, API, business logic, and aggregations are stored and processed strictly as integer cents (e.g., `$45.99` is stored as `4599` cents). This guarantees zero IEEE-754 floating-point drift or rounding anomalies.
 - **Advanced SQLite Window Functions**: Employs `ROW_NUMBER() OVER (PARTITION BY category_id ORDER BY date DESC)` to fetch the latest 3 transactions partitioned by budget category in a single high-efficiency SQL query.
 - **Common Table Expressions (CTEs)**: Computes month-over-month spending and income deltas using SQL CTEs.
