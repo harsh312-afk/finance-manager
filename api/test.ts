@@ -1,18 +1,16 @@
 export default async function handler(req: any, res: any) {
-  let sqliteSupported = false;
-  let sqliteError = null;
+  let appLoaded = false;
+  let appError = null;
   try {
-    const sqlite = await import('node:sqlite');
-    sqliteSupported = !!sqlite.DatabaseSync;
+    const appModule = await import('../server/app.ts');
+    appLoaded = !!appModule.default;
   } catch (err: any) {
-    sqliteError = err.message;
+    appError = { message: err?.message, stack: err?.stack };
   }
 
   res.status(200).json({
-    nodeVersion: process.version,
-    sqliteSupported,
-    sqliteError,
-    platform: process.platform,
-    arch: process.arch
+    appLoaded,
+    appError,
+    nodeVersion: process.version
   });
 }
