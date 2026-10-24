@@ -10,7 +10,7 @@
     "dev": "concurrently -k -p \"[{name}]\" -n \"SERVER,CLIENT\" -c \"cyan.bold,green.bold\" \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "tsx watch server/index.ts",
     "dev:client": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && esbuild server/apiHandler.ts --bundle --platform=node --format=esm --packages=external --outfile=api/index.js",
     "start": "NODE_ENV=production tsx server/index.ts",
     "test": "vitest run",
     "seed": "tsx server/db/seed.ts"
