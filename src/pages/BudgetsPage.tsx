@@ -12,7 +12,8 @@ import {
   Edit3, 
   ArrowRight,
   Sparkles,
-  PieChart
+  PieChart,
+  Calendar
 } from 'lucide-react';
 
 interface BudgetsPageProps {
@@ -25,6 +26,13 @@ export const BudgetsPage: React.FC<BudgetsPageProps> = ({ categories, onRefreshC
   const [loading, setLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [budgetToEdit, setBudgetToEdit] = useState<Budget | null>(null);
+  const [selectedMonth, setSelectedMonth] = useState<string>('2026-09');
+
+  const availableMonths = [
+    { value: '2026-09', label: 'September 2026 (Current)' },
+    { value: '2026-08', label: 'August 2026' },
+    { value: '2026-07', label: 'July 2026' }
+  ];
 
   // Custom Category & Budget Creation state
   const [isCreatingCustomCat, setIsCreatingCustomCat] = useState<boolean>(false);
@@ -39,7 +47,7 @@ export const BudgetsPage: React.FC<BudgetsPageProps> = ({ categories, onRefreshC
   const fetchBudgets = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/budgets?month=2026-09');
+      const res = await fetch(`/api/budgets?month=${selectedMonth}`);
       if (!res.ok) throw new Error('Failed to load budgets');
       const data = await res.json();
       setBudgets(data);
@@ -52,7 +60,7 @@ export const BudgetsPage: React.FC<BudgetsPageProps> = ({ categories, onRefreshC
 
   useEffect(() => {
     fetchBudgets();
-  }, []);
+  }, [selectedMonth]);
 
   const openCreateModal = () => {
     setBudgetToEdit(null);
@@ -228,13 +236,30 @@ export const BudgetsPage: React.FC<BudgetsPageProps> = ({ categories, onRefreshC
           </div>
         </div>
 
-        <button
-          onClick={openCreateModal}
-          className="w-full md:w-auto px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center justify-center space-x-2 transition shadow-sm shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Set Category Budget</span>
-        </button>
+        <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full md:w-auto">
+          <div className="flex items-center space-x-1.5 w-full sm:w-auto">
+            <Calendar className="w-4 h-4 text-slate-400 shrink-0" />
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              className="w-full sm:w-auto text-xs font-semibold bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer shadow-xs"
+            >
+              {availableMonths.map((m) => (
+                <option key={m.value} value={m.value}>
+                  {m.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            onClick={openCreateModal}
+            className="w-full sm:w-auto px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center justify-center space-x-2 transition shadow-sm shrink-0"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Set Category Budget</span>
+          </button>
+        </div>
       </div>
 
       {/* 3. Budget Cards Grid */}

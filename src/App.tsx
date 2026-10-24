@@ -15,6 +15,7 @@ export const App: React.FC = () => {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [budgetAlertsCount, setBudgetAlertsCount] = useState<number>(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   // Global Modals
   const [isNewTxOpen, setIsNewTxOpen] = useState<boolean>(false);
@@ -136,6 +137,8 @@ export const App: React.FC = () => {
         onNavigate={setCurrentPage}
         onOpenShortcuts={() => setIsShortcutsOpen(true)}
         alertCount={budgetAlertsCount}
+        isOpenMobile={isMobileMenuOpen}
+        onCloseMobile={() => setIsMobileMenuOpen(false)}
       />
 
       {/* Main Content Area */}
@@ -145,6 +148,7 @@ export const App: React.FC = () => {
           onOpenNewTransaction={() => setIsNewTxOpen(true)}
           budgetAlertsCount={budgetAlertsCount}
           onViewAlerts={() => setCurrentPage('budgets')}
+          onToggleMobileMenu={() => setIsMobileMenuOpen(prev => !prev)}
         />
 
         <main className="flex-1 px-8 py-6 overflow-y-auto max-w-7xl mx-auto w-full">

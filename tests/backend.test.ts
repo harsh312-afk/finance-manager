@@ -154,4 +154,13 @@ describe('Personal Finance Manager - Backend & Database Tests', () => {
       expect(accAfter.balance_cents).toBe(accBefore.balance_cents - depositCents);
     });
   });
+
+  describe('8. Server & Fullstack Architecture', () => {
+    it('verifies accounts and category seeding integrity', () => {
+      const accounts = dbManager.query('SELECT * FROM accounts');
+      const categories = dbManager.query('SELECT * FROM categories');
+      expect(accounts.length).toBeGreaterThanOrEqual(3);
+      expect(categories.length).toBeGreaterThanOrEqual(9);
+    });
+  });
 });

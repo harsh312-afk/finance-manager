@@ -5,22 +5,27 @@ import {
   PieChart, 
   PiggyBank, 
   CalendarClock,
-  Sparkles,
-  Keyboard
+  Keyboard,
+  X
 } from 'lucide-react';
+import { BrandIcon } from '../common/BrandIcon';
 
 interface SidebarProps {
   currentPage: string;
   onNavigate: (page: string) => void;
   onOpenShortcuts: () => void;
   alertCount?: number;
+  isOpenMobile?: boolean;
+  onCloseMobile?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
   currentPage,
   onNavigate,
   onOpenShortcuts,
-  alertCount = 0
+  alertCount = 0,
+  isOpenMobile = false,
+  onCloseMobile
 }) => {
   const navItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard, shortcut: 'g o' },
@@ -30,19 +35,35 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'recurring', label: 'Recurring Bills', icon: CalendarClock, shortcut: 'g r' }
   ];
 
-  return (
-    <aside className="w-64 bg-slate-900 text-white flex flex-col shrink-0 min-h-screen border-r border-slate-800">
+  const handleNavClick = (id: string) => {
+    onNavigate(id);
+    if (onCloseMobile) {
+      onCloseMobile();
+    }
+  };
+
+  const sidebarContent = (
+    <div className="w-64 bg-slate-900 text-white flex flex-col shrink-0 h-full border-r border-slate-800 select-none">
       {/* Brand Header */}
-      <div className="h-16 flex items-center px-6 border-b border-slate-800/80 space-x-3">
-        <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
-          <Sparkles className="w-5 h-5 text-slate-950 font-bold" />
+      <div className="h-16 flex items-center justify-between px-6 border-b border-slate-800/80">
+        <div className="flex items-center space-x-3">
+          <BrandIcon className="w-8 h-8 drop-shadow" />
+          <div>
+            <h1 className="font-extrabold text-base tracking-tight text-white flex items-center">
+              VaultFlow
+            </h1>
+            <p className="text-[10px] text-emerald-400 font-semibold tracking-wider uppercase">Finance Manager</p>
+          </div>
         </div>
-        <div>
-          <h1 className="font-extrabold text-base tracking-tight text-white flex items-center">
-            VaultFlow
-          </h1>
-          <p className="text-[10px] text-slate-400 font-medium tracking-wider uppercase">Finance Manager</p>
-        </div>
+        {onCloseMobile && (
+          <button
+            onClick={onCloseMobile}
+            className="md:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+            aria-label="Close navigation"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
       </div>
 
       {/* Navigation Links */}
@@ -54,7 +75,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           return (
             <button
               key={item.id}
-              onClick={() => onNavigate(item.id)}
+              onClick={() => handleNavClick(item.id)}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-150 group ${
                 isActive
                   ? 'bg-emerald-600 text-white shadow-md shadow-emerald-900/40'
@@ -85,7 +106,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Footer Info & Shortcuts */}
       <div className="p-4 border-t border-slate-800 space-y-3">
         <button
-          onClick={onOpenShortcuts}
+          onClick={() => {
+            onOpenShortcuts();
+            if (onCloseMobile) onCloseMobile();
+          }}
           className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-slate-800/70 hover:bg-slate-800 text-slate-300 text-xs font-medium transition"
         >
           <div className="flex items-center space-x-2">
@@ -105,6 +129,29 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <span className="font-mono text-slate-500">v1.0</span>
         </div>
       </div>
-    </aside>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop Persistent Sidebar */}
+      <aside className="hidden md:flex flex-col min-h-screen shrink-0">
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile Drawer Backdrop & Slide-over */}
+      {isOpenMobile && (
+        <div className="fixed inset-0 z-50 md:hidden flex">
+          <div 
+            className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity duration-300"
+            onClick={onCloseMobile}
+            aria-hidden="true"
+          />
+          <div className="relative z-10 flex-1 flex max-w-xs w-full shadow-2xl">
+            {sidebarContent}
+          </div>
+        </div>
+      )}
+    </>
   );
 };

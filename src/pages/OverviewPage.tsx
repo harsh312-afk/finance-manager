@@ -14,7 +14,8 @@ import {
   Calendar,
   PiggyBank,
   CheckCircle2,
-  ChevronRight
+  ChevronRight,
+  RefreshCw
 } from 'lucide-react';
 import { 
   ResponsiveContainer, 
@@ -38,11 +39,18 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ onNavigate, onOpenNe
   const [data, setData] = useState<OverviewData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
+  const [selectedMonth, setSelectedMonth] = useState<string>('2026-09');
+
+  const availableMonths = [
+    { value: '2026-09', label: 'September 2026 (Current)' },
+    { value: '2026-08', label: 'August 2026' },
+    { value: '2026-07', label: 'July 2026' }
+  ];
 
   const fetchOverview = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/overview?month=2026-09');
+      const res = await fetch(`/api/overview?month=${selectedMonth}`);
       if (!res.ok) throw new Error('Failed to load financial overview');
       const json = await res.json();
       setData(json);
@@ -55,7 +63,7 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ onNavigate, onOpenNe
 
   useEffect(() => {
     fetchOverview();
-  }, []);
+  }, [selectedMonth]);
 
   if (loading) {
     return (
@@ -102,6 +110,41 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ onNavigate, onOpenNe
 
   return (
     <div className="space-y-6 pb-12">
+      {/* Period Selection Bar */}
+      <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
+            <Calendar className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-slate-900">Reporting Period</h3>
+            <p className="text-xs text-slate-500">Historical spending aggregates and cash flow</p>
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end">
+          <select
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            className="text-xs font-semibold bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer shadow-xs"
+          >
+            {availableMonths.map((m) => (
+              <option key={m.value} value={m.value}>
+                {m.label}
+              </option>
+            ))}
+          </select>
+
+          <button
+            onClick={fetchOverview}
+            title="Refresh overview metrics"
+            className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition"
+          >
+            <RefreshCw className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
       {/* 1. Stat Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Net Balance */}
@@ -123,7 +166,7 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ onNavigate, onOpenNe
         {/* Monthly Income */}
         <div className="p-5 bg-white rounded-2xl border border-slate-200/80 shadow-xs hover:border-slate-300 transition">
           <div className="flex items-center justify-between text-slate-500 mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider">September Income</span>
+            <span className="text-xs font-bold uppercase tracking-wider">{selectedMonth === '2026-09' ? 'September' : selectedMonth === '2026-08' ? 'August' : 'July'} Income</span>
             <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
               <TrendingUp className="w-4 h-4" />
             </div>
@@ -143,7 +186,7 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ onNavigate, onOpenNe
         {/* Monthly Spending */}
         <div className="p-5 bg-white rounded-2xl border border-slate-200/80 shadow-xs hover:border-slate-300 transition">
           <div className="flex items-center justify-between text-slate-500 mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider">September Spending</span>
+            <span className="text-xs font-bold uppercase tracking-wider">{selectedMonth === '2026-09' ? 'September' : selectedMonth === '2026-08' ? 'August' : 'July'} Spending</span>
             <div className="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center text-rose-600">
               <TrendingDown className="w-4 h-4" />
             </div>
@@ -213,7 +256,7 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ onNavigate, onOpenNe
           <div className="flex items-center justify-between mb-3">
             <div>
               <h3 className="text-sm font-bold text-slate-900">Spending by Category</h3>
-              <p className="text-xs text-slate-500">Distribution for September</p>
+              <p className="text-xs text-slate-500">Distribution for {selectedMonth === '2026-09' ? 'September' : selectedMonth === '2026-08' ? 'August' : 'July'}</p>
             </div>
           </div>
 
